@@ -8,13 +8,18 @@
 <body>
     <h1>Registration!</h1>
     <form action="#" th:action="@{/register}" th:method="post">
-        <label for="login">Enter login:  <input type="text" name="login" id="login"/></label>
+        <label for="login">Enter login:  <input type="text" name="login" id="login" required/></label>
+        <p th:if="${loginAlreadyExist}" class="error">Login already exist.</p>
 
-        <label for="password">Enter password: <input type="text" name="password" id="password"/></label>
+        <label for="password">Enter password: <input type="text" name="password" id="password" required/></label>
+        <p th:if="${passwordsTooShortError}" class="error">Password is too short.</p>
 
-        <label for="password_again">Enter password again: <input type="text" name="password_again" id="password_again"/></label>
+        <label for="password_again">Enter password again: <input type="text" name="password_again" id="password_again" required/></label>
+        <p th:if="${passwordsMatchError}" class="error">Passwords not match.</p>
 
-        <button type="submit">Register</button>
+        <div class="button">
+            <button type="submit" class="btn">Register</button>
+        </div>
     </form>
 </body>
 </html>
