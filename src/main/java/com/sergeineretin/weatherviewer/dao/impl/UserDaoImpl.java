@@ -1,5 +1,6 @@
 package com.sergeineretin.weatherviewer.dao.impl;
 
+import com.sergeineretin.weatherviewer.Utils;
 import com.sergeineretin.weatherviewer.dao.UserDao;
 import com.sergeineretin.weatherviewer.exceptions.DatabaseException;
 import com.sergeineretin.weatherviewer.exceptions.UniqueConstraintViolationException;
@@ -11,18 +12,7 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.exception.ConstraintViolationException;
 
 public class UserDaoImpl implements UserDao {
-    private static SessionFactory sessionFactory;
 
-    static {
-        try {
-            sessionFactory = new Configuration()
-                    .configure("hibernate.cfg.xml")
-                    .addAnnotatedClass(User.class)
-                    .buildSessionFactory();
-        } catch (Exception e) {
-            throw new DatabaseException("Database unavailable");
-        }
-    }
 
     @Override
     public User getUserById(int id) {
@@ -31,7 +21,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void save(User user) {
-        Session session = sessionFactory.openSession();
+        Session session = Utils.getSessionFactory().openSession();
         try {
             session.beginTransaction();
             session.persist(user);

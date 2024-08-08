@@ -1,0 +1,62 @@
+package com.sergeineretin.weatherviewer.dao.impl;
+
+import com.sergeineretin.weatherviewer.Utils;
+import com.sergeineretin.weatherviewer.dao.SessionDao;
+import com.sergeineretin.weatherviewer.exceptions.DatabaseException;
+import com.sergeineretin.weatherviewer.model.Session;
+import com.sergeineretin.weatherviewer.model.User;
+import jakarta.persistence.NoResultException;
+import org.hibernate.query.Query;
+import org.hibernate.query.criteria.HibernateCriteriaBuilder;
+import org.hibernate.query.criteria.JpaCriteriaQuery;
+import org.hibernate.query.criteria.JpaPredicate;
+import org.hibernate.query.criteria.JpaRoot;
+
+import java.time.ZonedDateTime;
+import java.util.Optional;
+
+public class SessionDaoImpl implements SessionDao {
+    @Override
+    public Optional<Session> createSession(User user) {
+        org.hibernate.Session session = Utils.getSessionFactory().openSession();
+        try {
+            session.beginTransaction();
+            HibernateCriteriaBuilder cb = session.getCriteriaBuilder();
+            JpaCriteriaQuery<User> cr = cb.createQuery(User.class);
+            JpaRoot<User> root = cr.from(User.class);
+
+            JpaPredicate login = cb.equal(root.get("login"), user.getLogin());
+            JpaPredicate password = cb.equal(root.get("password"), user.getPassword());
+            cr.select(root).where(cb.and(login, password));
+
+            Query<User> query = session.createQuery(cr);
+            User singleResult = query.getSingleResult();
+
+            Session result = getSession(singleResult);
+            session.persist(result);
+            session.getTransaction().commit();
+
+            return Optional.of(result);
+        } catch (NoResultException e) {
+            if (session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            return Optional.empty();
+        } catch (Exception e) {
+            if (session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            throw new DatabaseException("Database error");
+        } finally {
+            session.close();
+        }
+    }
+
+    private Session getSession(User user) {
+        ZonedDateTime expiredTime = ZonedDateTime.now().plusHours(Utils.SESSION_TIME_IN_HOURS);
+        return Session.builder()
+                .user(user)
+                .expiresAt(expiredTime)
+                .build();
+    }
+}

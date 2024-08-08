@@ -22,5 +22,5 @@ public class Session {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
     @Column(name = "expires_at")
-    private ZonedDateTime session;
+    private ZonedDateTime expiresAt;
 }

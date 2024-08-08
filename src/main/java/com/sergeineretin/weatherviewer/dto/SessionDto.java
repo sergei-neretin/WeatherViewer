@@ -15,5 +15,5 @@ import java.time.ZonedDateTime;
 public class SessionDto {
     private Long id;
     private User user;
-    private ZonedDateTime session;
+    private ZonedDateTime expiresAt;
 }
