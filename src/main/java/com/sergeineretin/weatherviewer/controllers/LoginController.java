@@ -8,6 +8,7 @@ import com.sergeineretin.weatherviewer.exceptions.UserNotFoundException;
 import com.sergeineretin.weatherviewer.service.LoginService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.thymeleaf.context.WebContext;
@@ -34,9 +35,9 @@ public class LoginController extends BaseController {
                     .password(password)
                     .build();
             SessionDto session = loginService.login(userDto);
-            System.out.println(session.getId());
-            System.out.println(session.getUser());
-            System.out.println(session.getExpiresAt());
+            Cookie cookie = new Cookie("sessionId", session.getId().toString());
+            cookie.setMaxAge(Integer.MAX_VALUE);
+            resp.addCookie(cookie);
         } catch (UserNotFoundException e) {
             webContext = Utils.buildWebContext(req, resp, getServletContext());
             webContext.setVariable("userError", true);

@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface SessionDao {
     Optional<Session> createSession(User user);
+    Optional<Session> findById(Long sessionId);
 }
