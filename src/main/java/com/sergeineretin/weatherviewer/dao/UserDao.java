@@ -4,5 +4,5 @@ import com.sergeineretin.weatherviewer.model.User;
 
 public interface UserDao {
     public User getUserById(int id);
-    public void save(User user);
+    public User save(User user);
 }

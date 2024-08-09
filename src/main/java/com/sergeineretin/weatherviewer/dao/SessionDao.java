@@ -6,6 +6,6 @@ import com.sergeineretin.weatherviewer.model.User;
 import java.util.Optional;
 
 public interface SessionDao {
-    Optional<Session> createSession(User user);
+    Optional<Session> createSession(Session session);
     Optional<Session> findById(Long sessionId);
 }

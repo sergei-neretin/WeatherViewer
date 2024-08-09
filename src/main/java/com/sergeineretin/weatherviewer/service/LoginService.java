@@ -3,7 +3,7 @@ package com.sergeineretin.weatherviewer.service;
 import com.sergeineretin.weatherviewer.dao.SessionDao;
 import com.sergeineretin.weatherviewer.dao.impl.SessionDaoImpl;
 import com.sergeineretin.weatherviewer.dto.SessionDto;
-import com.sergeineretin.weatherviewer.dto.UserDto;
+import com.sergeineretin.weatherviewer.dto.UserRegistrationDto;
 import com.sergeineretin.weatherviewer.exceptions.UserNotFoundException;
 import com.sergeineretin.weatherviewer.model.Session;
 import com.sergeineretin.weatherviewer.model.User;
@@ -15,11 +15,11 @@ public class LoginService {
     SessionDao sessionDao = new SessionDaoImpl();
     ModelMapper modelMapper = new ModelMapper();
 
-    public SessionDto login(UserDto userDto) {
-        User user = modelMapper.map(userDto, User.class);
-        Optional<Session> session = sessionDao.createSession(user);
-        if (session.isPresent()) {
-            return modelMapper.map(session.get(), SessionDto.class);
+    public SessionDto login(SessionDto sessionDto) {
+        Session session = modelMapper.map(sessionDto, Session.class);
+        Optional<Session> optionalSession = sessionDao.createSession(session);
+        if (optionalSession.isPresent()) {
+            return modelMapper.map(optionalSession.get(), SessionDto.class);
         } else {
             throw new UserNotFoundException("Invalid username or password");
         }

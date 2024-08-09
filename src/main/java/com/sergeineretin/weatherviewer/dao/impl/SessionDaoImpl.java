@@ -16,7 +16,8 @@ import java.util.Optional;
 
 public class SessionDaoImpl implements SessionDao {
     @Override
-    public Optional<Session> createSession(User user) {
+    public Optional<Session> createSession(Session userSession) {
+        User user = userSession.getUser();
         org.hibernate.Session session = Utils.getSessionFactory().openSession();
         try {
             session.beginTransaction();
@@ -31,11 +32,11 @@ public class SessionDaoImpl implements SessionDao {
             Query<User> query = session.createQuery(cr);
             User singleResult = query.getSingleResult();
 
-            Session result = getSession(singleResult);
-            session.persist(result);
+            userSession.setUser(singleResult);
+            session.persist(userSession);
             session.getTransaction().commit();
 
-            return Optional.of(result);
+            return Optional.of(userSession);
         } catch (NoResultException e) {
             if (session.getTransaction().isActive()) {
                 session.getTransaction().rollback();
@@ -67,7 +68,7 @@ public class SessionDaoImpl implements SessionDao {
                 criteriaDelete.where(cb.equal(root.get("id"), sessionId));
                 session.createMutationQuery(criteriaDelete).executeUpdate();
                 session.getTransaction().commit();
-                throw new SessionExpiredException("Your session expired");
+                return Optional.empty();
             }
         } catch (Exception e) {
             if (session.getTransaction().isActive()) {
@@ -77,13 +78,5 @@ public class SessionDaoImpl implements SessionDao {
         } finally {
             session.close();
         }
-    }
-
-    private Session getSession(User user) {
-        ZonedDateTime expiredTime = ZonedDateTime.now().plusHours(Utils.SESSION_TIME_IN_HOURS);
-        return Session.builder()
-                .user(user)
-                .expiresAt(expiredTime)
-                .build();
     }
 }

@@ -3,15 +3,17 @@ package com.sergeineretin.weatherviewer.service;
 import com.sergeineretin.weatherviewer.dao.UserDao;
 import com.sergeineretin.weatherviewer.dao.impl.UserDaoImpl;
 import com.sergeineretin.weatherviewer.dto.UserDto;
+import com.sergeineretin.weatherviewer.dto.UserRegistrationDto;
 import com.sergeineretin.weatherviewer.model.User;
 import org.modelmapper.ModelMapper;
 
 public class RegistrationService {
-    UserDao userDao = new UserDaoImpl();
-    ModelMapper mapper = new ModelMapper();
+    private UserDao userDao = new UserDaoImpl();
+    private ModelMapper mapper = new ModelMapper();
 
-    public void register(UserDto userDto) {
-        User user = mapper.map(userDto, User.class);
-        userDao.save(user);
+    public UserDto register(UserRegistrationDto userRegistrationDto) {
+        User user = mapper.map(userRegistrationDto, User.class);
+        User savedUser = userDao.save(user);
+        return mapper.map(savedUser, UserDto.class);
     }
 }

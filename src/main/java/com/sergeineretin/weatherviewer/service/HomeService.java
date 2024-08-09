@@ -3,6 +3,7 @@ package com.sergeineretin.weatherviewer.service;
 import com.sergeineretin.weatherviewer.dao.SessionDao;
 import com.sergeineretin.weatherviewer.dao.impl.SessionDaoImpl;
 import com.sergeineretin.weatherviewer.dto.SessionDto;
+import com.sergeineretin.weatherviewer.exceptions.SessionExpiredException;
 import com.sergeineretin.weatherviewer.model.Session;
 import org.modelmapper.ModelMapper;
 
@@ -17,7 +18,7 @@ public class HomeService {
         if(session.isPresent()) {
             return modelMapper.map(session.get(), SessionDto.class);
         } else {
-            return new SessionDto();
+            throw new SessionExpiredException("Session expired");
         }
     }
 }

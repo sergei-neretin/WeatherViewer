@@ -14,6 +14,6 @@ import java.time.ZonedDateTime;
 @Builder
 public class SessionDto {
     private Long id;
-    private User user;
+    private UserRegistrationDto user;
     private ZonedDateTime expiresAt;
 }

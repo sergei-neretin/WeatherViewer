@@ -5,10 +5,7 @@ import com.sergeineretin.weatherviewer.dao.UserDao;
 import com.sergeineretin.weatherviewer.exceptions.DatabaseException;
 import com.sergeineretin.weatherviewer.exceptions.UniqueConstraintViolationException;
 import com.sergeineretin.weatherviewer.model.User;
-import jakarta.persistence.PersistenceException;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.exception.ConstraintViolationException;
 
 public class UserDaoImpl implements UserDao {
@@ -20,12 +17,13 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void save(User user) {
+    public User save(User user) {
         Session session = Utils.getSessionFactory().openSession();
         try {
             session.beginTransaction();
             session.persist(user);
             session.getTransaction().commit();
+            return user;
         } catch (Exception e) {
             if (e.getCause() instanceof ConstraintViolationException) {
                 if (session.getTransaction().isActive()) {

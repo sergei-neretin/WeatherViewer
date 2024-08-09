@@ -2,6 +2,7 @@ package com.sergeineretin.weatherviewer.controllers;
 
 import com.sergeineretin.weatherviewer.Utils;
 import com.sergeineretin.weatherviewer.dto.UserDto;
+import com.sergeineretin.weatherviewer.dto.UserRegistrationDto;
 import com.sergeineretin.weatherviewer.exceptions.DatabaseException;
 import com.sergeineretin.weatherviewer.exceptions.UniqueConstraintViolationException;
 import com.sergeineretin.weatherviewer.service.RegistrationService;
@@ -40,8 +41,9 @@ public class RegistrationController extends BaseController {
                 webContext.setVariable("passwordsTooShortError", true);
                 templateEngine.process("register", webContext, resp.getWriter());
             } else {
-                UserDto userDto = UserDto.builder().login(login).password(password).build();
-                registrationService.register(userDto);
+                UserRegistrationDto userDto = UserRegistrationDto.builder().login(login).password(password).build();
+                UserDto registeredUser = registrationService.register(userDto);
+                webContext.setVariable("login", registeredUser.getLogin());
                 resp.setStatus(HttpServletResponse.SC_OK);
                 resp.sendRedirect(req.getContextPath() + "/success.html");
             }
