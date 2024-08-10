@@ -6,6 +6,8 @@ import com.sergeineretin.weatherviewer.dto.UserRegistrationDto;
 import com.sergeineretin.weatherviewer.exceptions.SessionExpiredException;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -19,7 +21,7 @@ public class HomeServiceIntegrationTests {
         UserRegistrationDto user = TestUtils.getUser();
         SessionDto session = TestUtils.getSession();
         registrationService.register(user);
-        Long sessionId = loginService.login(session).getId();
+        UUID sessionId = loginService.login(session).getId();
         SessionDto result = underTest.getSessionOrDelete(sessionId);
         assertEquals(user.getLogin(), result.getUser().getLogin());
     }
@@ -29,7 +31,7 @@ public class HomeServiceIntegrationTests {
         UserRegistrationDto user = TestUtils.getUser();
         SessionDto expiredSession = TestUtils.getExpiredSession();
         registrationService.register(user);
-        Long sessionId = loginService.login(expiredSession).getId();
+        UUID sessionId = loginService.login(expiredSession).getId();
         assertThrows(SessionExpiredException.class, () -> underTest.getSessionOrDelete(sessionId));
     }
 }

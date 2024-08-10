@@ -14,9 +14,11 @@ public class LoginServiceIntegrationTests {
     @Test
     public void testThatLoginServiceLoginReturnsSessionWithIdOfRegisteredUser() {
         UserRegistrationDto user = TestUtils.getUser();
-        SessionDto expiredSession = TestUtils.getExpiredSession();
+        SessionDto sessionDto = TestUtils.getSession();
+
         registrationService.register(user);
-        SessionDto session = underTest.login(expiredSession);
-        assertEquals(1L, session.getId());
+        SessionDto result = underTest.login(sessionDto);
+
+        assertEquals(sessionDto.getUser().getLogin(), result.getUser().getLogin());
     }
 }
