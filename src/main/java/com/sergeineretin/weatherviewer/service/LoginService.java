@@ -3,10 +3,8 @@ package com.sergeineretin.weatherviewer.service;
 import com.sergeineretin.weatherviewer.dao.SessionDao;
 import com.sergeineretin.weatherviewer.dao.impl.SessionDaoImpl;
 import com.sergeineretin.weatherviewer.dto.SessionDto;
-import com.sergeineretin.weatherviewer.dto.UserRegistrationDto;
 import com.sergeineretin.weatherviewer.exceptions.UserNotFoundException;
 import com.sergeineretin.weatherviewer.model.Session;
-import com.sergeineretin.weatherviewer.model.User;
 import org.modelmapper.ModelMapper;
 
 import java.util.Optional;

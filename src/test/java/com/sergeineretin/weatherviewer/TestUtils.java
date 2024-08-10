@@ -35,15 +35,21 @@ public class TestUtils {
         }
     }
 
-    public static UserRegistrationDto getUser() {
+    public static UserRegistrationDto getUser1() {
         return UserRegistrationDto.builder()
                 .login("John Doe")
-                .password("password")
+                .password("password1")
+                .build();
+    }
+    public static UserRegistrationDto getUser2() {
+        return UserRegistrationDto.builder()
+                .login("Jane Doe")
+                .password("password2")
                 .build();
     }
 
     public static SessionDto getExpiredSession() {
-        UserRegistrationDto user = getUser();
+        UserRegistrationDto user = getUser1();
         return SessionDto.builder()
                 .user(user)
                 .expiresAt(ZonedDateTime.now())
@@ -53,7 +59,7 @@ public class TestUtils {
     public static SessionDto getSession() {
         ZonedDateTime time = ZonedDateTime.now();
         time = time.plusHours(SESSION_TIME_IN_HOURS);
-        UserRegistrationDto user = getUser();
+        UserRegistrationDto user = getUser1();
         return SessionDto.builder()
                 .user(user)
                 .expiresAt(time)

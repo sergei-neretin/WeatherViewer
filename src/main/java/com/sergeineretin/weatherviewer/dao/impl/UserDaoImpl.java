@@ -12,7 +12,7 @@ public class UserDaoImpl implements UserDao {
 
 
     @Override
-    public User getUserById(int id) {
+    public User getUserById(long id) {
         return null;
     }
 
@@ -35,6 +35,20 @@ public class UserDaoImpl implements UserDao {
             }
         } finally {
             session.close();
+        }
+    }
+
+    @Override
+    public void deleteUserById(long id) {
+        try (Session session = Utils.getSessionFactory().openSession()) {
+            session.beginTransaction();
+            User user = session.get(User.class, id);
+            if (user != null) {
+                session.remove(user);
+            }
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            throw new DatabaseException("Database unavailable");
         }
     }
 }

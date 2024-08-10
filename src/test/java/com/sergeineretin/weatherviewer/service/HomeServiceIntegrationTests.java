@@ -18,20 +18,20 @@ public class HomeServiceIntegrationTests {
 
     @Test
     public void testThatHomeServiceGetSessionOrDeleteReturnsSessionById() {
-        UserRegistrationDto user = TestUtils.getUser();
+        UserRegistrationDto user = TestUtils.getUser1();
         SessionDto session = TestUtils.getSession();
         registrationService.register(user);
-        UUID sessionId = loginService.login(session).getId();
+        String sessionId = loginService.login(session).getId();
         SessionDto result = underTest.getSessionOrDelete(sessionId);
         assertEquals(user.getLogin(), result.getUser().getLogin());
     }
 
     @Test
     public void testThatHomeServiceGetSessionOrDeleteThrowsExceptionWhenSessionIsExpired() {
-        UserRegistrationDto user = TestUtils.getUser();
+        UserRegistrationDto user = TestUtils.getUser2();
         SessionDto expiredSession = TestUtils.getExpiredSession();
         registrationService.register(user);
-        UUID sessionId = loginService.login(expiredSession).getId();
+        String sessionId = loginService.login(expiredSession).getId();
         assertThrows(SessionExpiredException.class, () -> underTest.getSessionOrDelete(sessionId));
     }
 }

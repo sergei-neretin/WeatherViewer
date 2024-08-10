@@ -1,8 +1,6 @@
 package com.sergeineretin.weatherviewer.service;
 
 import com.sergeineretin.weatherviewer.TestUtils;
-import com.sergeineretin.weatherviewer.dao.UserDao;
-import com.sergeineretin.weatherviewer.dao.impl.UserDaoImpl;
 import com.sergeineretin.weatherviewer.dto.UserDto;
 import com.sergeineretin.weatherviewer.dto.UserRegistrationDto;
 import com.sergeineretin.weatherviewer.exceptions.UniqueConstraintViolationException;
@@ -29,14 +27,14 @@ public class RegistrationServiceIntegrationTests {
 
     @Test
     public void testThatRegistrationServiceRegisterUserWithNotUniqueLoginThrowsException() {
-        UserRegistrationDto userDto = TestUtils.getUser();
+        UserRegistrationDto userDto = TestUtils.getUser1();
         underTest.register(userDto);
         assertThrows(UniqueConstraintViolationException.class, () -> underTest.register(userDto));
     }
 
     @Test
     public void testThatRegistrationServiceRegisterUserWithUniqueLoginReturnsCorrectId() {
-        UserRegistrationDto userDto = TestUtils.getUser();
+        UserRegistrationDto userDto = TestUtils.getUser1();
         UserDto result = underTest.register(userDto);
         assertEquals(3L, result.getId());
     }

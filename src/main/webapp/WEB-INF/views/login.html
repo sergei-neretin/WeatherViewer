@@ -11,7 +11,9 @@
     <label for="login">Enter login:  <input type="text" name="login" id="login" required/></label>
 
     <label for="password">Enter password: <input type="text" name="password" id="password" required/></label>
-    <button type="submit">Log in</button>
+    <div class="button">
+        <button type="submit" class="btn">Sign up</button>
+    </div>
     <p th:if="${userError}" class="error">Login or password not match.</p>
 </form>
 </body>

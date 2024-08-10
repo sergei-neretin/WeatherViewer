@@ -28,8 +28,10 @@ public class HomeController extends BaseController {
                         .findFirst();
 
                 if (cookie.isPresent()) {
-                    Long sessionId = Long.parseLong(cookie.get().getValue());
+                    String sessionId = cookie.get().getValue();
+                    System.out.println(sessionId);
                     SessionDto session = service.getSessionOrDelete(sessionId);
+                    webContext.setVariable("login", session.getUser().getLogin());
                     templateEngine.process("homeSignedIn", webContext, resp.getWriter());
                 } else {
                     templateEngine.process("homeNotSignedIn", webContext, resp.getWriter());

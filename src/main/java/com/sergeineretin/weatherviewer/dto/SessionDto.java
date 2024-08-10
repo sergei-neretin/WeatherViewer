@@ -1,6 +1,5 @@
 package com.sergeineretin.weatherviewer.dto;
 
-import com.sergeineretin.weatherviewer.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +12,7 @@ import java.time.ZonedDateTime;
 @Data
 @Builder
 public class SessionDto {
-    private Long id;
+    private String id;
     private UserRegistrationDto user;
     private ZonedDateTime expiresAt;
 }

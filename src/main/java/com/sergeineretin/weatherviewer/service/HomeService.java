@@ -10,10 +10,10 @@ import org.modelmapper.ModelMapper;
 import java.util.Optional;
 
 public class HomeService {
-    private SessionDao sessionDao = new SessionDaoImpl();
+    private final SessionDao sessionDao = new SessionDaoImpl();
     ModelMapper modelMapper = new ModelMapper();
 
-    public SessionDto getSessionOrDelete(Long sessionId) {
+    public SessionDto getSessionOrDelete(String sessionId) {
         Optional<Session> session = sessionDao.findById(sessionId);
         if(session.isPresent()) {
             return modelMapper.map(session.get(), SessionDto.class);

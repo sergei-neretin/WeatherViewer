@@ -1,19 +1,21 @@
 package com.sergeineretin.weatherviewer.dao.impl;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.sergeineretin.weatherviewer.Utils;
 import com.sergeineretin.weatherviewer.dao.SessionDao;
 import com.sergeineretin.weatherviewer.exceptions.DatabaseException;
-import com.sergeineretin.weatherviewer.exceptions.SessionExpiredException;
 import com.sergeineretin.weatherviewer.model.Session;
 import com.sergeineretin.weatherviewer.model.User;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.criteria.Root;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.query.Query;
 import org.hibernate.query.criteria.*;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
+@Slf4j
 public class SessionDaoImpl implements SessionDao {
     @Override
     public Optional<Session> createSession(Session userSession) {
@@ -26,17 +28,21 @@ public class SessionDaoImpl implements SessionDao {
             JpaRoot<User> root = cr.from(User.class);
 
             JpaPredicate login = cb.equal(root.get("login"), user.getLogin());
-            JpaPredicate password = cb.equal(root.get("password"), user.getPassword());
-            cr.select(root).where(cb.and(login, password));
+            cr.select(root).where(login);
 
             Query<User> query = session.createQuery(cr);
             User singleResult = query.getSingleResult();
+            String  bcryptHashString = singleResult.getPassword();
+            String password = userSession.getUser().getPassword();
+            if (BCrypt.verifyer().verify(password.toCharArray(),  bcryptHashString).verified) {
+                userSession.setUser(singleResult);
+                session.persist(userSession);
+                session.getTransaction().commit();
 
-            userSession.setUser(singleResult);
-            session.persist(userSession);
-            session.getTransaction().commit();
-
-            return Optional.of(userSession);
+                return Optional.of(userSession);
+            } else {
+                return Optional.empty();
+            }
         } catch (NoResultException e) {
             if (session.getTransaction().isActive()) {
                 session.getTransaction().rollback();
@@ -46,6 +52,7 @@ public class SessionDaoImpl implements SessionDao {
             if (session.getTransaction().isActive()) {
                 session.getTransaction().rollback();
             }
+            log.info("Error creating session", e);
             throw new DatabaseException("Database error");
         } finally {
             session.close();
@@ -53,7 +60,7 @@ public class SessionDaoImpl implements SessionDao {
     }
 
     @Override
-    public Optional<Session> findById(Long sessionId) {
+    public Optional<Session> findById(String sessionId) {
         org.hibernate.Session session = Utils.getSessionFactory().openSession();
         try {
             session.beginTransaction();

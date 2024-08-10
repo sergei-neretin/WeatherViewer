@@ -13,7 +13,7 @@ public class LoginServiceIntegrationTests {
 
     @Test
     public void testThatLoginServiceLoginReturnsSessionWithIdOfRegisteredUser() {
-        UserRegistrationDto user = TestUtils.getUser();
+        UserRegistrationDto user = TestUtils.getUser1();
         SessionDto sessionDto = TestUtils.getSession();
 
         registrationService.register(user);
