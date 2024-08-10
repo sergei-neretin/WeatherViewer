@@ -1,7 +1,6 @@
 package com.sergeineretin.weatherviewer;
 
 import com.sergeineretin.weatherviewer.dto.SessionDto;
-import com.sergeineretin.weatherviewer.dto.UserDto;
 import com.sergeineretin.weatherviewer.dto.UserRegistrationDto;
 import com.sergeineretin.weatherviewer.model.Location;
 import com.sergeineretin.weatherviewer.model.Session;
@@ -9,6 +8,9 @@ import com.sergeineretin.weatherviewer.model.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
 import java.time.ZonedDateTime;
 
 public class TestUtils {
@@ -56,5 +58,15 @@ public class TestUtils {
                 .user(user)
                 .expiresAt(time)
                 .build();
+    }
+
+    public static void resetDatabase() {
+        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1", "sa", "")) {
+            Statement stmt = conn.createStatement();
+            stmt.execute("DROP ALL OBJECTS DELETE FILES");
+            stmt.execute("RUNSCRIPT FROM 'classpath:/schema.sql'");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
