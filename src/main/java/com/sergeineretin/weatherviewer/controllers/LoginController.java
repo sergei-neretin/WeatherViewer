@@ -19,7 +19,7 @@ import java.time.ZonedDateTime;
 @WebServlet("/login")
 public class LoginController extends BaseController {
     private WebContext webContext;
-    private LoginService loginService = new LoginService();
+    private final LoginService loginService = new LoginService();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         webContext = Utils.buildWebContext(req, resp, getServletContext());
@@ -33,7 +33,7 @@ public class LoginController extends BaseController {
             String password = req.getParameter("password");
             SessionDto sessionDto = buildSessionDto(login, password);
             SessionDto session = loginService.login(sessionDto);
-            Cookie cookie = new Cookie("sessionId", session.getId().toString());
+            Cookie cookie = new Cookie("sessionId", session.getId());
             cookie.setMaxAge(Integer.MAX_VALUE);
             resp.addCookie(cookie);
         } catch (UserNotFoundException e) {
