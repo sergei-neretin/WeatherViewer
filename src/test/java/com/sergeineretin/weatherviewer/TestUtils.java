@@ -8,9 +8,6 @@ import com.sergeineretin.weatherviewer.model.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
 import java.time.ZonedDateTime;
 
 public class TestUtils {
@@ -18,6 +15,8 @@ public class TestUtils {
     private TestUtils() {}
 
     public static final Long SESSION_TIME_IN_HOURS = 6L;
+
+    public static final String OPEN_WEATHER_API_JSON = "{\"coord\":{\"lon\":82.9282,\"lat\":55.0328},\"weather\":[{\"id\":520,\"main\":\"Rain\",\"description\":\"light intensity shower rain\",\"icon\":\"09d\"}],\"base\":\"stations\",\"main\":{\"temp\":290.84,\"feels_like\":290.44,\"temp_min\":290.84,\"temp_max\":290.84,\"pressure\":1008,\"humidity\":68,\"sea_level\":1008,\"grnd_level\":991},\"visibility\":10000,\"wind\":{\"speed\":2,\"deg\":240},\"clouds\":{\"all\":75},\"dt\":1723361865,\"sys\":{\"type\":1,\"id\":8958,\"country\":\"RU\",\"sunrise\":1723330530,\"sunset\":1723385496},\"timezone\":25200,\"id\":1496747,\"name\":\"Novosibirsk\",\"cod\":200}";
     private static final SessionFactory sessionFactory;
     public static SessionFactory getSessionFactory() {
         return sessionFactory;
@@ -66,13 +65,4 @@ public class TestUtils {
                 .build();
     }
 
-    public static void resetDatabase() {
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1", "sa", "")) {
-            Statement stmt = conn.createStatement();
-            stmt.execute("DROP ALL OBJECTS DELETE FILES");
-            stmt.execute("RUNSCRIPT FROM 'classpath:/schema.sql'");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }
