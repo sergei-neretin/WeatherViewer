@@ -5,10 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.sergeineretin.weatherviewer.deserializer.LocationDtoCustomDeserializer;
 import com.sergeineretin.weatherviewer.dto.LocationDto;
+import com.sergeineretin.weatherviewer.exceptions.SessionCookieNotFoundException;
 import com.sergeineretin.weatherviewer.model.Location;
 import com.sergeineretin.weatherviewer.model.Session;
 import com.sergeineretin.weatherviewer.model.User;
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
@@ -22,6 +24,9 @@ import org.thymeleaf.templateresolver.WebApplicationTemplateResolver;
 import org.thymeleaf.web.IWebApplication;
 import org.thymeleaf.web.servlet.IServletWebExchange;
 import org.thymeleaf.web.servlet.JakartaServletWebApplication;
+
+import java.util.Arrays;
+import java.util.Optional;
 
 public class Utils {
     private Utils() {}
@@ -65,5 +70,22 @@ public class Utils {
         JakartaServletWebApplication application = JakartaServletWebApplication.buildApplication(servletContext);
         IServletWebExchange webExchange = application.buildExchange(req, resp);
         return new WebContext(webExchange);
+    }
+
+    public static String getSessionId(HttpServletRequest req) {
+        Optional<Cookie> sessionId = Arrays.stream(req.getCookies())
+                .filter(c -> c.getName().equals("sessionId"))
+                .findFirst();
+        if (sessionId.isPresent()) {
+            return sessionId.get().getValue();
+        } else {
+            throw new SessionCookieNotFoundException("required cookie not found");
+        }
+    }
+
+    public static void removeSessionIdCookie(HttpServletResponse resp) {
+        Cookie sessionCookieRemove = new Cookie("sessionId", "");
+        sessionCookieRemove.setMaxAge(0);
+        resp.addCookie(sessionCookieRemove);
     }
 }

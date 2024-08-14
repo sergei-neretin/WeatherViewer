@@ -13,7 +13,17 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User getUserById(long id) {
-        return null;
+        Session session = Utils.getSessionFactory().openSession();
+        try {
+            session.beginTransaction();
+            User user = session.get(User.class, id);
+            session.getTransaction().commit();
+            return user;
+        } catch (Exception e) {
+            throw new DatabaseException("Database unavailable");
+        } finally {
+            session.close();
+        }
     }
 
     @Override

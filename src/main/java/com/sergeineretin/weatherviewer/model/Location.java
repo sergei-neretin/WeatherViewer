@@ -12,7 +12,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Data
 @Builder
-@Entity(name = "locations")
+@Entity
+@Table(name = "locations")
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,11 +21,11 @@ public class Location {
     private Long id;
     @Column(name = "name", nullable = false)
     private String name;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    @Column(name = "latitude", nullable = false)
+    @Column(name = "latitude", nullable = false, precision = 10, scale = 4)
     private BigDecimal latitude;
-    @Column(name = "longitude", nullable = false)
+    @Column(name = "longitude", nullable = false, precision = 10, scale = 4)
     private BigDecimal longitude;
 }

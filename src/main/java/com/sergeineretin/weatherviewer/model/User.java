@@ -1,16 +1,17 @@
 package com.sergeineretin.weatherviewer.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
-@Entity(name="users")
+@Entity
+@Table(name="users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,4 +21,7 @@ public class User {
     private String login;
     @Column(name = "password", unique = true, nullable = false)
     private String password;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Location> locations;
 }

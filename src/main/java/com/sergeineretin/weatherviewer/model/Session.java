@@ -18,7 +18,7 @@ public class Session {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
     private String id;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
     @Column(name = "expires_at")
