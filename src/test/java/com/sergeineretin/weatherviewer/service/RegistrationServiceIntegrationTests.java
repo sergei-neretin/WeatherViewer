@@ -24,18 +24,27 @@ public class RegistrationServiceIntegrationTests {
         }
         underTest = new RegistrationService();
     }
+    @Test
+    public void testThatRegistrationServiceRegisterUserWithUniqueLoginReturnsCorrectId() {
+        UserRegistrationDto userDto = TestUtils.getUser1Dto();
+        UserDto result = underTest.register(userDto);
+        Long id;
+        try(org.hibernate.Session session = TestUtils.getSessionFactory().openSession())  {
+            session.beginTransaction();
+            User singleResult = session.createQuery("from User where login = :login", User.class)
+                    .setParameter("login", userDto.getLogin()).getSingleResult();
+            id = singleResult.getId();
+            session.getTransaction().commit();
+        }
+        assertEquals(id, result.getId());
+    }
 
     @Test
     public void testThatRegistrationServiceRegisterUserWithNotUniqueLoginThrowsException() {
-        UserRegistrationDto userDto = TestUtils.getUser1();
+        UserRegistrationDto userDto = TestUtils.getUser1Dto();
         underTest.register(userDto);
         assertThrows(UniqueConstraintViolationException.class, () -> underTest.register(userDto));
     }
 
-    @Test
-    public void testThatRegistrationServiceRegisterUserWithUniqueLoginReturnsCorrectId() {
-        UserRegistrationDto userDto = TestUtils.getUser1();
-        UserDto result = underTest.register(userDto);
-        assertEquals(3L, result.getId());
-    }
+
 }

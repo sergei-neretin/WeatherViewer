@@ -8,17 +8,17 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LoginServiceIntegrationTests {
-    RegistrationService registrationService = new RegistrationService();
     LoginService underTest = new LoginService();
 
     @Test
     public void testThatLoginServiceLoginReturnsSessionWithIdOfRegisteredUser() {
-        UserRegistrationDto user = TestUtils.getUser1();
-        SessionDto sessionDto = TestUtils.getSession();
-
-        registrationService.register(user);
+        UserRegistrationDto userRegistrationDto = TestUtils.getUser1Dto();
+        RegistrationService registrationService = new RegistrationService();
+        registrationService.register(userRegistrationDto);
+        SessionDto sessionDto = TestUtils.getSessionDto();
+        sessionDto.setUser(userRegistrationDto);
         SessionDto result = underTest.login(sessionDto);
 
-        assertEquals(sessionDto.getUser().getLogin(), result.getUser().getLogin());
+        assertEquals(userRegistrationDto.getLogin(), result.getUser().getLogin());
     }
 }
