@@ -7,6 +7,7 @@ import com.sergeineretin.weatherviewer.exceptions.SessionExpiredException;
 import com.sergeineretin.weatherviewer.service.SessionService;
 import com.sergeineretin.weatherviewer.service.OpenWeatherAPIService;
 import com.sergeineretin.weatherviewer.service.WeatherService;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +24,8 @@ public class HomeController extends BaseController {
 
     @Override
     public void init() throws ServletException {
+        ServletContext servletContext = getServletContext();
+        this.templateEngine = Utils.buildTemplateEngine(servletContext);
         HttpClient client = HttpClient.newHttpClient();
         weatherService = new OpenWeatherAPIService(client);
     }
@@ -35,12 +38,15 @@ public class HomeController extends BaseController {
             UserDto user = service.getUserOrDeleteSession(sessionId);
             weatherService.updateTemperatures(user.getLocations());
             webContext.setVariable("user", user);
+            webContext.setVariable("authorized", true);
             templateEngine.process("homeSignedIn", webContext, resp.getWriter());
         } catch (SessionExpiredException e) {
             Utils.removeSessionIdCookie(resp);
+            webContext.setVariable("authorized", false);
             webContext.setVariable("sessionExpired", true);
             templateEngine.process("homeNotSignedIn", webContext, resp.getWriter());
         } catch (SessionCookieNotFoundException e) {
+            webContext.setVariable("authorized", false);
             templateEngine.process("homeNotSignedIn", webContext, resp.getWriter());
         }
     }
@@ -55,12 +61,15 @@ public class HomeController extends BaseController {
             weatherService.deleteLocation(Long.parseLong(id));
             weatherService.updateTemperatures(user.getLocations());
             webContext.setVariable("user", user);
+            webContext.setVariable("authorized", true);
             templateEngine.process("homeSignedIn", webContext, resp.getWriter());
         } catch (SessionExpiredException e) {
             Utils.removeSessionIdCookie(resp);
             webContext.setVariable("sessionExpired", true);
+            webContext.setVariable("authorized", false);
             templateEngine.process("homeNotSignedIn", webContext, resp.getWriter());
         } catch (SessionCookieNotFoundException e) {
+            webContext.setVariable("authorized", false);
             templateEngine.process("homeNotSignedIn", webContext, resp.getWriter());
         }
     }

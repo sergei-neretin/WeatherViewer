@@ -73,6 +73,9 @@ public class Utils {
     }
 
     public static String getSessionId(HttpServletRequest req) {
+        if (req.getCookies() == null) {
+            throw new SessionCookieNotFoundException("required cookie not found");
+        }
         Optional<Cookie> sessionId = Arrays.stream(req.getCookies())
                 .filter(c -> c.getName().equals("sessionId"))
                 .findFirst();
