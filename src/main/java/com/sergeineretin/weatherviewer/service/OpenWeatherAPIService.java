@@ -84,6 +84,7 @@ public class OpenWeatherAPIService implements WeatherService {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
                 String body = response.body();
+                log.info(body);
                 return Utils.getMapper().readValue(body, LocationDto.class);
             } else if (response.statusCode() == 404) {
                 throw new LocationException("No weather data found");
@@ -91,6 +92,7 @@ public class OpenWeatherAPIService implements WeatherService {
                 throw new ServerException("Internal Server Error");
             }
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new UnexpectedException(e.getMessage());
         }
     }

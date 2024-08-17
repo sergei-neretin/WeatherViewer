@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.thymeleaf.context.WebContext;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.http.HttpClient;
 
 @WebServlet("/search")
@@ -41,6 +42,8 @@ public class SearchController extends BaseController {
             LocationDto byName = weatherService.findByName(name);
             webContext.setVariable("location", byName);
             webContext.setVariable("user", userDto);
+            webContext.setVariable("authorized", true);
+            templateEngine.process("search", webContext, resp.getWriter());
         } catch (SessionExpiredException e) {
             Utils.removeSessionIdCookie(resp);
             webContext.setVariable("sessionExpired", true);
@@ -56,10 +59,10 @@ public class SearchController extends BaseController {
         try {
             String sessionId = Utils.getSessionId(req);
             UserDto userDto = service.getUserOrDeleteSession(sessionId);
-            LocationDto save = (LocationDto) req.getAttribute("save");
-            save.setUser(userDto);
-            weatherService.addLocation(save);
-            resp.sendRedirect(req.getContextPath() + "/home");
+            LocationDto location = getLocation(req);
+            location.setUser(userDto);
+            weatherService.addLocation(location);
+            resp.sendRedirect(req.getContextPath() + "/");
         } catch (SessionExpiredException e) {
             Utils.removeSessionIdCookie(resp);
             webContext.setVariable("sessionExpired", true);
@@ -67,5 +70,16 @@ public class SearchController extends BaseController {
         } catch (SessionCookieNotFoundException e) {
             templateEngine.process("homeNotSignedIn", webContext, resp.getWriter());
         }
+    }
+
+    private LocationDto getLocation(HttpServletRequest req) {
+        String name = (String) req.getParameter("name");
+        BigDecimal lon = new BigDecimal((String) req.getParameter("lon"));
+        BigDecimal lat = new BigDecimal((String) req.getParameter("lat"));
+        return LocationDto.builder()
+                .name(name)
+                .longitude(lon)
+                .latitude(lat)
+                .build();
     }
 }
