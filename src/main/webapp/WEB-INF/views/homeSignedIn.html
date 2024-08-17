@@ -25,7 +25,7 @@
                             <p class="card-text">Latitude: <span th:text="${element.getLatitude()}"></span> </p>
                             <p class="card-text">Longitude: <span th:text="${element.getLongitude()}"></span> </p>
                             <form action="#" th:action="@{/}" th:method="post" class="d-flex" >
-                                <input type="hidden" name="lon" th:value="${element.getId()}">
+                                <input type="hidden" name="id" th:value="${element.getId()}">
                                 <button class="btn btn-outline-danger" type="submit">Delete</button>
                             </form>
                         </div>
