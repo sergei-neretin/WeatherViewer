@@ -36,6 +36,7 @@ public class LoginController extends BaseController {
             Cookie cookie = new Cookie("sessionId", session.getId());
             cookie.setMaxAge(Integer.MAX_VALUE);
             resp.addCookie(cookie);
+            resp.sendRedirect(getServletContext().getContextPath());
         } catch (UserNotFoundException e) {
             webContext = Utils.buildWebContext(req, resp, getServletContext());
             webContext.setVariable("userError", true);

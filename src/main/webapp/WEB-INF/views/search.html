@@ -10,21 +10,29 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 <div th:insert="fragments :: header(authorized=true, username=${user.getLogin()})"></div>
 <div th:insert="fragments :: search"></div>
-<section class="main-content">
-<div class="card" style="width: 18rem;">
-    <div class="card-body">
-        <h5 class="card-title"><span th:text="${location.getName()}"></span></h5>
-        <p class="card-text">Temperature: <span th:text="${location.getTemperature()}"></span> &deg C</p>
-        <p class="card-text">Latitude: <span th:text="${location.getLatitude()}"></span> </p>
-        <p class="card-text">Longitude: <span th:text="${location.getLongitude()}"></span> </p>
-        <form action="#" th:action="@{/search}" th:method="post" class="d-flex" role="search">
-            <input type="hidden" name="name" th:value="${location.getName()}">
-            <input type="hidden" name="lat" th:value="${location.getLatitude()}">
-            <input type="hidden" name="lon" th:value="${location.getLongitude()}">
-            <button class="btn btn-success btn-lg" type="submit">Add</button>
-        </form>
-    </div>
+<div class="container-xxl">
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Search</li>
+        </ol>
+    </nav>
+    <section class="main-content">
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title"><span th:text="${location.getName()}"></span></h5>
+                <p class="card-text">Temperature: <span th:text="${location.getTemperature()}"></span> &deg C</p>
+                <p class="card-text">Latitude: <span th:text="${location.getLatitude()}"></span> </p>
+                <p class="card-text">Longitude: <span th:text="${location.getLongitude()}"></span> </p>
+                <form action="#" th:action="@{/search}" th:method="post" class="d-flex" role="search">
+                    <input type="hidden" name="name" th:value="${location.getName()}">
+                    <input type="hidden" name="lat" th:value="${location.getLatitude()}">
+                    <input type="hidden" name="lon" th:value="${location.getLongitude()}">
+                    <button class="btn btn-success btn-lg" type="submit">Add</button>
+                </form>
+            </div>
+        </div>
+    </section>
 </div>
-</section>
 </body>
 </html>

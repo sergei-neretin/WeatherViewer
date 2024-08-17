@@ -9,6 +9,12 @@
 <body>
 <h1 class="text-center display-1">Login</h1>
 <div class="container-xxl">
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Login</li>
+        </ol>
+    </nav>
     <form action="#" th:action="@{/login}" th:method="post">
         <div class="mb-3 form-floating">
             <input class="form-control form-control-lg" type="email" name="login" id="login" required/>
