@@ -86,4 +86,22 @@ public class SessionDaoImpl implements SessionDao {
             session.close();
         }
     }
+
+    @Override
+    public void deleteById(String sessionId) {
+        org.hibernate.Session session = Utils.getSessionFactory().openSession();
+        try {
+            session.beginTransaction();
+            Session result = session.get(Session.class, sessionId);
+            session.detach(result);
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            if (session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            throw new DatabaseException("Database error");
+        } finally {
+            session.close();
+        }
+    }
 }

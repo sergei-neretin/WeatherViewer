@@ -14,7 +14,9 @@
             <div class="col-md-3 text-end">
                 <a href="/register"  th:unless="${authorized}"  th:href="@{/register}" role="button" class="btn btn-large btn-outline-primary active me-2">Sign up</a>
                 <a href="/login" th:unless="${authorized}" th:href="@{/login}" role="button"  class="btn btn-outline-primary">Log in</a>
-                <a href="/login" th:if="${authorized}" th:href="@{/login}" role="button"  class="btn btn-outline-primary">Logout</a>
+                <form th:if="${authorized}" action="#" th:action="@{/logout}" th:method="post">
+                    <button type="submit" class="btn btn-outline-primary">Logout</button>
+                </form>
             </div>
         </header>
     </div>

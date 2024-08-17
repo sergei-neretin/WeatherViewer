@@ -46,4 +46,8 @@ public class SessionService {
             throw new SessionExpiredException("Session expired");
         }
     }
+
+    public void deleteSession(String sessionId) {
+        sessionDao.deleteById(sessionId);
+    }
 }
