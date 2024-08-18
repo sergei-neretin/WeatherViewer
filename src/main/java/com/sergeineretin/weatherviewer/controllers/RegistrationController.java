@@ -45,7 +45,7 @@ public class RegistrationController extends BaseController {
                 UserDto registeredUser = registrationService.register(userDto);
                 webContext.setVariable("login", registeredUser.getLogin());
                 resp.setStatus(HttpServletResponse.SC_OK);
-                resp.sendRedirect(req.getContextPath() + "/success.html");
+                templateEngine.process("success", webContext, resp.getWriter());
             }
         } catch (DatabaseException e) {
             log.error(e.getMessage());
