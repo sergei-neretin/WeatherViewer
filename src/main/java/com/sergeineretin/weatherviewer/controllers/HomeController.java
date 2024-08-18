@@ -1,10 +1,12 @@
 package com.sergeineretin.weatherviewer.controllers;
 
 import com.sergeineretin.weatherviewer.Utils;
+import com.sergeineretin.weatherviewer.dto.LocationDto;
 import com.sergeineretin.weatherviewer.dto.UserDto;
 import com.sergeineretin.weatherviewer.exceptions.DatabaseException;
 import com.sergeineretin.weatherviewer.exceptions.SessionCookieNotFoundException;
 import com.sergeineretin.weatherviewer.exceptions.SessionExpiredException;
+import com.sergeineretin.weatherviewer.service.LocationService;
 import com.sergeineretin.weatherviewer.service.SessionService;
 import com.sergeineretin.weatherviewer.service.OpenWeatherAPIService;
 import com.sergeineretin.weatherviewer.service.WeatherService;
@@ -17,10 +19,12 @@ import org.thymeleaf.context.WebContext;
 
 import java.io.IOException;
 import java.net.http.HttpClient;
+import java.util.List;
 
 @WebServlet("")
 public class HomeController extends BaseController {
-    private final SessionService service = SessionService.getInstance();
+    private final SessionService sessionService = SessionService.getInstance();
+    private final LocationService locationService = LocationService.getInstance();
     private WeatherService weatherService;
 
     @Override
@@ -36,9 +40,11 @@ public class HomeController extends BaseController {
         WebContext webContext = Utils.buildWebContext(req, resp, getServletContext());
         try {
             String sessionId = Utils.getSessionId(req);
-            UserDto user = service.getUserOrDeleteSession(sessionId);
-            weatherService.updateTemperatures(user.getLocations());
+            UserDto user = sessionService.getUserOrDeleteSession(sessionId);
+            List<LocationDto> locationsByUserId = locationService.findLocationsByUserId(user.getId());
+            weatherService.updateTemperatures(locationsByUserId);
             webContext.setVariable("user", user);
+            webContext.setVariable("locations", locationsByUserId);
             webContext.setVariable("authorized", true);
             templateEngine.process("homeSignedIn", webContext, resp.getWriter());
         } catch (SessionExpiredException e) {

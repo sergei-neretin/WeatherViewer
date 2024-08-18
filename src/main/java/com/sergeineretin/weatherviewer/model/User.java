@@ -3,8 +3,6 @@ package com.sergeineretin.weatherviewer.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -21,7 +19,4 @@ public class User {
     private String login;
     @Column(name = "password", unique = true, nullable = false)
     private String password;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<Location> locations;
 }

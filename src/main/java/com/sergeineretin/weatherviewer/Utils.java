@@ -31,6 +31,7 @@ import java.util.Optional;
 public class Utils {
     private Utils() {}
     public static final Long SESSION_TIME_IN_HOURS = 6L;
+    public static final int ZERO_CELSIUS_IN_KELVINS = 273;
     public static final String API_KEY = "9605e0b1cffa118684762af53f99d2c4";
     @Getter
     private static final SessionFactory sessionFactory;

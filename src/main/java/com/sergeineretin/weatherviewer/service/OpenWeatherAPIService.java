@@ -85,7 +85,10 @@ public class OpenWeatherAPIService implements WeatherService {
             if (response.statusCode() == 200) {
                 String body = response.body();
                 log.info(body);
-                return Utils.getMapper().readValue(body, LocationDto.class);
+                LocationDto locationDto = Utils.getMapper().readValue(body, LocationDto.class);
+                BigDecimal tempInCelsius = locationDto.getTemperature().add(new BigDecimal(-Utils.ZERO_CELSIUS_IN_KELVINS));
+                locationDto.setTemperature(tempInCelsius);
+                return locationDto;
             } else if (response.statusCode() == 404) {
                 throw new LocationException("No weather data found");
             } else {

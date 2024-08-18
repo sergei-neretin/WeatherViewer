@@ -4,7 +4,7 @@ import com.sergeineretin.weatherviewer.Utils;
 import com.sergeineretin.weatherviewer.dao.LocationDao;
 import com.sergeineretin.weatherviewer.exceptions.DatabaseException;
 import com.sergeineretin.weatherviewer.model.Location;
-import com.sergeineretin.weatherviewer.model.User;
+import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -20,8 +20,8 @@ public class LocationDaoImpl implements LocationDao {
         org.hibernate.Session session = Utils.getSessionFactory().openSession();
         try {
             session.beginTransaction();
-            User user = session.get(User.class, userId);
-            List<Location> locations = user.getLocations();
+            List<Location> locations = session.createQuery("from Location where user.id = :userId", Location.class)
+                    .setParameter("userId", userId).list();
             session.getTransaction().commit();
             return locations;
         } catch (HibernateException e) {

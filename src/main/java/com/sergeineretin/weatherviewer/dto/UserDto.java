@@ -2,8 +2,6 @@ package com.sergeineretin.weatherviewer.dto;
 
 import lombok.*;
 
-import java.util.List;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -12,5 +10,4 @@ import java.util.List;
 public class UserDto {
     private Long id;
     private String login;
-    private List<LocationDto> locations;
 }
