@@ -7,10 +7,17 @@
 <div th:fragment="header (authorized, username)">
     <div class="container">
         <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-            <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+            <a th:href="@{/}" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
                 <span th:text="${username} ?: 'no user authenticated'">...</span>
             </a>
-
+            <nav class="navbar bg-body-tertiary" >
+                <div class="container-fluid justify-content-center">
+                    <form action="#" th:action="@{/search}" th:method="get" class="d-flex" role="search">
+                        <input class="form-control me-2" type="search" placeholder="Novosibirsk" aria-label="Search" name="name" id="name" required>
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
+                </div>
+            </nav>
             <div class="col-md-3 text-end">
                 <a href="/register"  th:unless="${authorized}"  th:href="@{/register}" role="button" class="btn btn-large btn-outline-primary active me-2">Sign up</a>
                 <a href="/login" th:unless="${authorized}" th:href="@{/login}" role="button"  class="btn btn-outline-primary">Log in</a>
@@ -21,19 +28,5 @@
         </header>
     </div>
 </div>
-
-<div th:fragment="search">
-    <nav class="navbar bg-body-tertiary" >
-        <div class="container-fluid justify-content-center">
-            <form action="#" th:action="@{/search}" th:method="get" class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Novosibirsk" aria-label="Search" name="name" id="name" required>
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
-        </div>
-    </nav>
-</div>
-
-
 </body>
-
 </html>
