@@ -1,14 +1,15 @@
 package com.sergeineretin.weatherviewer.service;
 
-import com.sergeineretin.weatherviewer.dto.LocationDto;
+import com.sergeineretin.weatherviewer.model.LocationWithTemperature;
+import com.sergeineretin.weatherviewer.model.LocationApiResponse;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 public interface WeatherService {
-    LocationDto findByName(String name);
-    LocationDto findByCoordinates(BigDecimal latitude, BigDecimal longitude);
-    void updateTemperatures(List<LocationDto> user);
+    List<LocationApiResponse> findByName(String name);
+    LocationWithTemperature findByCoordinates(BigDecimal latitude, BigDecimal longitude);
+    void updateTemperatures(List<LocationWithTemperature> user);
     void deleteLocation(Long locationId);
-    LocationDto addLocation(LocationDto locationDto);
+    LocationWithTemperature addLocation(LocationWithTemperature locationWithTemperature);
 }

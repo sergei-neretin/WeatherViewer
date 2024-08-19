@@ -2,7 +2,7 @@ package com.sergeineretin.weatherviewer.service;
 
 import com.sergeineretin.weatherviewer.dao.LocationDao;
 import com.sergeineretin.weatherviewer.dao.impl.LocationDaoImpl;
-import com.sergeineretin.weatherviewer.dto.LocationDto;
+import com.sergeineretin.weatherviewer.model.LocationWithTemperature;
 import com.sergeineretin.weatherviewer.model.Location;
 import org.modelmapper.ModelMapper;
 
@@ -19,11 +19,11 @@ public class LocationService {
         }
         return instance;
     }
-    public List<LocationDto> findLocationsByUserId(long userId) {
+    public List<LocationWithTemperature> findLocationsByUserId(long userId) {
         ModelMapper modelMapper = new ModelMapper();
         List<Location> locations = locationDao.findByUserId(userId);
         return locations.stream()
-                .map( location -> modelMapper.map(location, LocationDto.class))
+                .map( location -> modelMapper.map(location, LocationWithTemperature.class))
                 .collect(Collectors.toList());
     }
 }

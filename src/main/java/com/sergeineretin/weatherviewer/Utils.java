@@ -1,10 +1,6 @@
 package com.sergeineretin.weatherviewer;
 
-import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.sergeineretin.weatherviewer.deserializer.LocationDtoCustomDeserializer;
-import com.sergeineretin.weatherviewer.dto.LocationDto;
 import com.sergeineretin.weatherviewer.exceptions.SessionCookieNotFoundException;
 import com.sergeineretin.weatherviewer.model.Location;
 import com.sergeineretin.weatherviewer.model.Session;
@@ -39,12 +35,6 @@ public class Utils {
     private static final ObjectMapper mapper;
     static {
         mapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule(
-                "LocationDtoCustomDeserializer",
-                new Version(1, 0, 0, null, null, null));
-        module.addDeserializer(LocationDto.class, new LocationDtoCustomDeserializer());
-        mapper.registerModule(module);
-
         try {
             sessionFactory = new Configuration()
                     .configure("hibernate.cfg.xml")

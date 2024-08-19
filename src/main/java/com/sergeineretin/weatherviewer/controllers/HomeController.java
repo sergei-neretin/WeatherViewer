@@ -1,7 +1,7 @@
 package com.sergeineretin.weatherviewer.controllers;
 
 import com.sergeineretin.weatherviewer.Utils;
-import com.sergeineretin.weatherviewer.dto.LocationDto;
+import com.sergeineretin.weatherviewer.model.LocationWithTemperature;
 import com.sergeineretin.weatherviewer.dto.UserDto;
 import com.sergeineretin.weatherviewer.exceptions.DatabaseException;
 import com.sergeineretin.weatherviewer.exceptions.SessionCookieNotFoundException;
@@ -41,10 +41,10 @@ public class HomeController extends BaseController {
         try {
             String sessionId = Utils.getSessionId(req);
             UserDto user = sessionService.getUserOrDeleteSession(sessionId);
-            List<LocationDto> locationsByUserId = locationService.findLocationsByUserId(user.getId());
-            weatherService.updateTemperatures(locationsByUserId);
+            List<LocationWithTemperature> locationsWithTemperatures = locationService.findLocationsByUserId(user.getId());
+            weatherService.updateTemperatures(locationsWithTemperatures);
             webContext.setVariable("user", user);
-            webContext.setVariable("locations", locationsByUserId);
+            webContext.setVariable("locationsWithTemperatures", locationsWithTemperatures);
             webContext.setVariable("authorized", true);
             templateEngine.process("homeSignedIn", webContext, resp.getWriter());
         } catch (SessionExpiredException e) {

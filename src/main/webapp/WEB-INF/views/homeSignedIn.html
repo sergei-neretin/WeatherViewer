@@ -13,14 +13,14 @@
     <div class="container-xxl">
         <section class="main-content">
             <div class="row row-cols-1 row-cols-md-2 g-4">
-                <div th:each="element : ${locations}">
+                <div th:each="element : ${locationsWithTemperatures}">
                     <div class="col">
                         <div class="card">
                             <div class="card-header">
                                 <span th:text="${element.getName()}"></span>
                             </div>
                             <div class="card-body">
-                                <p class="card-text">Temperature: <span th:text="${element.getTemperature()}"></span> &deg C</p>
+                                <p class="card-text">Temperature: <span th:text="${element.getMain().getTemperature()}"></span> &deg C</p>
                                 <p class="card-text">Latitude: <span th:text="${element.getLatitude()}"></span> </p>
                                 <p class="card-text">Longitude: <span th:text="${element.getLongitude()}"></span> </p>
                                 <form action="#" th:action="@{/}" th:method="post" class="d-flex" >

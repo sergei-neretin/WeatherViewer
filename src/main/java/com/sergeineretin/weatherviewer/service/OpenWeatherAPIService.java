@@ -1,13 +1,15 @@
 package com.sergeineretin.weatherviewer.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.sergeineretin.weatherviewer.Utils;
 import com.sergeineretin.weatherviewer.dao.LocationDao;
 import com.sergeineretin.weatherviewer.dao.impl.LocationDaoImpl;
-import com.sergeineretin.weatherviewer.dto.LocationDto;
+import com.sergeineretin.weatherviewer.model.LocationWithTemperature;
 import com.sergeineretin.weatherviewer.exceptions.LocationException;
 import com.sergeineretin.weatherviewer.exceptions.ServerException;
 import com.sergeineretin.weatherviewer.exceptions.UnexpectedException;
 import com.sergeineretin.weatherviewer.model.Location;
+import com.sergeineretin.weatherviewer.model.LocationApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 
@@ -19,6 +21,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -30,10 +33,10 @@ public class OpenWeatherAPIService implements WeatherService {
     }
 
     @Override
-    public void updateTemperatures(List<LocationDto> locations) {
-        for(LocationDto location : locations) {
-            BigDecimal temperature = findByCoordinates(location.getLatitude(), location.getLongitude()).getTemperature();
-            location.setTemperature(temperature);
+    public void updateTemperatures(List<LocationWithTemperature> locations) {
+        for(LocationWithTemperature location : locations) {
+            BigDecimal temperature = findByCoordinates(location.getLatitude(), location.getLongitude()).getMain().getTemperature();
+            location.getMain().setTemperature(temperature);
         }
     }
 
@@ -42,30 +45,57 @@ public class OpenWeatherAPIService implements WeatherService {
         locationDao.deleteById(locationId);
     }
 
-    public LocationDto addLocation(LocationDto locationDto) {
+    public LocationWithTemperature addLocation(LocationWithTemperature locationWithTemperature) {
         ModelMapper modelMapper = new ModelMapper();
-        Location location = modelMapper.map(locationDto, Location.class);
+        Location location = modelMapper.map(locationWithTemperature, Location.class);
         locationDao.save(location);
-        return modelMapper.map(location, LocationDto.class);
+        return modelMapper.map(location, LocationWithTemperature.class);
     }
 
     @Override
-    public LocationDto findByName(String name) throws LocationException {
+    public List<LocationApiResponse> findByName(String name) throws LocationException {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI("https://api.openweathermap.org/data/2.5/weather?q=" + URLEncoder.encode(name, StandardCharsets.UTF_8) + "&appid=" + Utils.API_KEY))
+                    .uri(new URI("https://api.openweathermap.org/geo/1.0/direct?"
+                            + "q=" + URLEncoder.encode(name, StandardCharsets.UTF_8)
+                            + "&appid=" + Utils.API_KEY
+                            + "&units=" + "metric"
+                            + "&limit=6"))
                     .header("Accept", "application/json")
                     .GET()
                     .build();
-            return getLocation(request);
+            return getLocations(request);
         } catch (URISyntaxException e) {
             log.error(e.getMessage());
             throw new UnexpectedException(e.getMessage());
         }
     }
 
+    private List<LocationApiResponse> getLocations(HttpRequest request) {
+        try {
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                String body = response.body();
+                log.info(body);
+                List<LocationApiResponse> locationDtos = Utils.getMapper().readValue(
+                        body,
+                        new TypeReference<>() {
+                        }
+                );
+                return locationDtos;
+            } else if (response.statusCode() == 404) {
+                return new ArrayList<>();
+            } else {
+                throw new ServerException("Internal Server Error");
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new UnexpectedException(e.getMessage());
+        }
+    }
+
     @Override
-    public LocationDto findByCoordinates(BigDecimal latitude, BigDecimal longitude) throws LocationException {
+    public LocationWithTemperature findByCoordinates(BigDecimal latitude, BigDecimal longitude) throws LocationException {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(new URI("https://api.openweathermap.org/data/2.5/weather?lon=" + longitude.toString() + "&lat=" + latitude.toString() + "&appid=" + Utils.API_KEY))
@@ -79,16 +109,16 @@ public class OpenWeatherAPIService implements WeatherService {
         }
     }
 
-    private LocationDto getLocation(HttpRequest request) {
+    private LocationWithTemperature getLocation(HttpRequest request) {
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
                 String body = response.body();
                 log.info(body);
-                LocationDto locationDto = Utils.getMapper().readValue(body, LocationDto.class);
-                BigDecimal tempInCelsius = locationDto.getTemperature().add(new BigDecimal(-Utils.ZERO_CELSIUS_IN_KELVINS));
-                locationDto.setTemperature(tempInCelsius);
-                return locationDto;
+                LocationWithTemperature locationWithTemperature = Utils.getMapper().readValue(body, LocationWithTemperature.class);
+                BigDecimal tempInCelsius = locationWithTemperature.getMain().getTemperature().add(new BigDecimal(-Utils.ZERO_CELSIUS_IN_KELVINS));
+                locationWithTemperature.getMain().setTemperature(tempInCelsius);
+                return locationWithTemperature;
             } else if (response.statusCode() == 404) {
                 throw new LocationException("No weather data found");
             } else {

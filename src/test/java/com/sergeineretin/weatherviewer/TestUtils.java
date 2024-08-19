@@ -1,6 +1,6 @@
 package com.sergeineretin.weatherviewer;
 
-import com.sergeineretin.weatherviewer.dto.LocationDto;
+import com.sergeineretin.weatherviewer.model.LocationWithTemperature;
 import com.sergeineretin.weatherviewer.dto.SessionDto;
 import com.sergeineretin.weatherviewer.dto.UserRegistrationDto;
 import com.sergeineretin.weatherviewer.model.Location;
@@ -80,15 +80,15 @@ public class TestUtils {
                 .expiresAt(time)
                 .build();
     }
-    public static LocationDto getLocation1() {
-        return LocationDto.builder()
+    public static LocationWithTemperature getLocation1() {
+        return LocationWithTemperature.builder()
                 .latitude(new BigDecimal("55.0328"))
                 .longitude(new BigDecimal("82.9282"))
                 .name("Novosibirsk")
                 .build();
     }
-    public static LocationDto getLocation2() {
-        return LocationDto.builder()
+    public static LocationWithTemperature getLocation2() {
+        return LocationWithTemperature.builder()
                 .latitude(new BigDecimal("55.7522"))
                 .longitude(new BigDecimal("37.6156"))
                 .name("Moscow")

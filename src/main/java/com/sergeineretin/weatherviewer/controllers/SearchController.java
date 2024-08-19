@@ -1,10 +1,11 @@
 package com.sergeineretin.weatherviewer.controllers;
 
 import com.sergeineretin.weatherviewer.Utils;
-import com.sergeineretin.weatherviewer.dto.LocationDto;
+import com.sergeineretin.weatherviewer.model.LocationWithTemperature;
 import com.sergeineretin.weatherviewer.dto.UserDto;
 import com.sergeineretin.weatherviewer.exceptions.SessionCookieNotFoundException;
 import com.sergeineretin.weatherviewer.exceptions.SessionExpiredException;
+import com.sergeineretin.weatherviewer.model.LocationApiResponse;
 import com.sergeineretin.weatherviewer.service.OpenWeatherAPIService;
 import com.sergeineretin.weatherviewer.service.SessionService;
 import com.sergeineretin.weatherviewer.service.WeatherService;
@@ -18,6 +19,7 @@ import org.thymeleaf.context.WebContext;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.http.HttpClient;
+import java.util.List;
 
 @WebServlet("/search")
 public class SearchController extends BaseController {
@@ -39,8 +41,8 @@ public class SearchController extends BaseController {
             String sessionId = Utils.getSessionId(req);
             UserDto userDto = service.getUserOrDeleteSession(sessionId);
             String name = req.getParameter("name");
-            LocationDto byName = weatherService.findByName(name);
-            webContext.setVariable("location", byName);
+            List<LocationApiResponse> locations = weatherService.findByName(name);
+            webContext.setVariable("locations", locations);
             webContext.setVariable("user", userDto);
             webContext.setVariable("authorized", true);
             templateEngine.process("search", webContext, resp.getWriter());
@@ -59,7 +61,7 @@ public class SearchController extends BaseController {
         try {
             String sessionId = Utils.getSessionId(req);
             UserDto userDto = service.getUserOrDeleteSession(sessionId);
-            LocationDto location = getLocation(req);
+            LocationWithTemperature location = getLocation(req);
             location.setUser(userDto);
             weatherService.addLocation(location);
             resp.sendRedirect(req.getContextPath() + "/");
@@ -72,11 +74,11 @@ public class SearchController extends BaseController {
         }
     }
 
-    private LocationDto getLocation(HttpServletRequest req) {
+    private LocationWithTemperature getLocation(HttpServletRequest req) {
         String name = (String) req.getParameter("name");
         BigDecimal lon = new BigDecimal((String) req.getParameter("lon"));
         BigDecimal lat = new BigDecimal((String) req.getParameter("lat"));
-        return LocationDto.builder()
+        return LocationWithTemperature.builder()
                 .name(name)
                 .longitude(lon)
                 .latitude(lat)
