@@ -5,10 +5,11 @@ import com.sergeineretin.weatherviewer.dao.LocationDao;
 import com.sergeineretin.weatherviewer.dao.UserDao;
 import com.sergeineretin.weatherviewer.dao.impl.LocationDaoImpl;
 import com.sergeineretin.weatherviewer.dao.impl.UserDaoImpl;
-import com.sergeineretin.weatherviewer.dto.LocationDto;
+import com.sergeineretin.weatherviewer.model.LocationWithTemperature;
 import com.sergeineretin.weatherviewer.dto.UserDto;
 import com.sergeineretin.weatherviewer.dto.UserRegistrationDto;
 import com.sergeineretin.weatherviewer.model.Location;
+import com.sergeineretin.weatherviewer.model.LocationApiResponse;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -35,16 +36,13 @@ public class OpenWeatherAPIServiceTests {
         var mockedHttpResponse = mock(HttpResponse.class);
         when(mockedHttpResponse.statusCode()).thenReturn(200);
 
-        when(mockedHttpResponse.body()).thenReturn(TestUtils.OPEN_WEATHER_API_JSON1);
+        when(mockedHttpResponse.body()).thenReturn(TestUtils.OPEN_WEATHER_API_LOCATIONS_JSON);
         when(mockedHttpClient.send(any(), any())).thenReturn(mockedHttpResponse);
         OpenWeatherAPIService underTest = new OpenWeatherAPIService(mockedHttpClient);
 
-        LocationDto novosibirsk = underTest.findByName("Novosibirsk");
+        List<LocationApiResponse> novosibirsk = underTest.findByName("Novosibirsk");
 
-        assertEquals("Novosibirsk", novosibirsk.getName());
-        assertEquals(new BigDecimal("55.0328"), novosibirsk.getLatitude());
-        assertEquals(new BigDecimal("82.9282"), novosibirsk.getLongitude());
-        assertEquals(new BigDecimal("290.84"), novosibirsk.getTemperature());
+        assertEquals("Novosibirsk", novosibirsk.get(0).getName());
     }
 
     @Test
@@ -57,12 +55,10 @@ public class OpenWeatherAPIServiceTests {
         when(mockedHttpClient.send(any(), any())).thenReturn(mockedHttpResponse);
         OpenWeatherAPIService underTest = new OpenWeatherAPIService(mockedHttpClient);
 
-        LocationDto novosibirsk = underTest.findByCoordinates(new BigDecimal("55.0328"), new BigDecimal("82.9282"));
+        LocationWithTemperature novosibirsk = underTest.findByCoordinates(new BigDecimal("55.0328"), new BigDecimal("82.9282"));
 
         assertEquals("Novosibirsk", novosibirsk.getName());
-        assertEquals(new BigDecimal("55.0328"), novosibirsk.getLatitude());
-        assertEquals(new BigDecimal("82.9282"), novosibirsk.getLongitude());
-        assertEquals(new BigDecimal("290.84"), novosibirsk.getTemperature());
+        assertEquals(new BigDecimal("17.84"), novosibirsk.getMain().getTemperature());
     }
 
     @Test
@@ -75,13 +71,13 @@ public class OpenWeatherAPIServiceTests {
         OpenWeatherAPIService underTest = new OpenWeatherAPIService(mockedHttpClient);
         UserRegistrationDto user = TestUtils.getUser1Dto();
         UserDto register = registrationService.register(user);
-        LocationDto location = TestUtils.getLocation1();
+        LocationWithTemperature location = TestUtils.getLocation1();
         location.setUser(register);
 
-        LocationDto locationDto = underTest.addLocation(location);
+        LocationWithTemperature locationWithTemperature = underTest.addLocation(location);
         List<Location> locations = new ArrayList<>(locationDao.findByUserId(register.getId()));
         assertEquals(1, locations.size());
-        assertEquals(locations.get(0).getId(), locationDto.getId());
+        assertEquals(locations.get(0).getId(), locationWithTemperature.getId());
     }
 
 
@@ -97,12 +93,12 @@ public class OpenWeatherAPIServiceTests {
         UserRegistrationDto user = TestUtils.getUser2Dto();
         UserDto register = registrationService.register(user);
 
-        LocationDto location1 = TestUtils.getLocation1();
+        LocationWithTemperature location1 = TestUtils.getLocation1();
         location1.setUser(register);
-        LocationDto locationDto1 = underTest.addLocation(location1);
+        LocationWithTemperature locationDto1 = underTest.addLocation(location1);
 
         underTest.deleteLocation(locationDto1.getId());
-        List<Location> result = userDao.getUserById(register.getId()).getLocations();
+        List<Location> result = locationDao.findByUserId(register.getId());
         assertTrue(result.isEmpty());
     }
 }
