@@ -60,10 +60,17 @@ public class HomeController extends BaseController {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        WebContext webContext = Utils.buildWebContext(req, resp, getServletContext());
         try {
-            String id = req.getParameter("id");
-            weatherService.deleteLocation(Long.parseLong(id));
+            String sessionId = Utils.getSessionId(req);
+            UserDto user = sessionService.getUserOrDeleteSession(sessionId);
+            Long id = Long.parseLong(req.getParameter("id"));
+            List<LocationWithTemperature> locationsByUserId = locationService.findLocationsByUserId(user.getId());
+            for (LocationWithTemperature location : locationsByUserId) {
+                if (location.getId().equals(id)) {
+                    weatherService.deleteLocation(id);
+                    break;
+                }
+            }
             resp.sendRedirect(getServletContext().getContextPath());
         } catch (DatabaseException e) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
