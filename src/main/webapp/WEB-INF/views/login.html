@@ -9,18 +9,22 @@
                 <li class="breadcrumb-item active" aria-current="page">Login</li>
             </ol>
         </nav>
-        <form action="#" th:action="@{/login}" th:method="post">
-            <div class="mb-3 form-floating">
-                <input class="form-control form-control-lg" type="email" name="login" id="login" required/>
-                <label class="form-label" for="login">Login</label>
-            </div>
-            <div class="mb-3 form-floating">
-                <input class="form-control form-control-lg" type="password" name="password" id="password" required/>
-                <label class="form-label" for="password">Password</label>
-            </div>
-            <button type="submit" class="btn btn-primary btn-lg">Sign up</button>
-            <p th:if="${userError}" class="error">Login or password not match.</p>
-        </form>
+        <div class="d-flex justify-content-center">
+            <form action="#" th:action="@{/login}" th:method="post">
+                <div class="mb-3 form-floating">
+                    <input class="form-control form-control-lg" th:classappend="${userError} ? 'is-invalid' : ''" type="email" name="login" id="login" required/>
+                    <label class="form-label" for="login">Login</label>
+                </div>
+                <div class="mb-3 form-floating">
+                    <input class="form-control form-control-lg" th:classappend="${userError} ? 'is-invalid' : ''" type="password" name="password" id="password" aria-describedby="passwordHelpBlock" required/>
+                    <label class="form-label" for="password">Password</label>
+                    <div th:if="${userError}" class="invalid-feedback" id="passwordHelpBlock">
+                        Login or password not match.
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg">Sign up</button>
+            </form>
+        </div>
     </div>
 </div>
 </html>

@@ -2,42 +2,41 @@
 <html xmlns:th="http://www.thymeleaf.org" th:replace="fragments :: common-structure(~{ :: div.register-body})">
 <div class="register-body">
     <h1 class="text-center display-1">Registration</h1>
-    <div class="container-xxl">
+    <div class="container">
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a th:href="@{/}">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Register</li>
             </ol>
         </nav>
-        <form action="#" th:action="@{/register}" th:method="post">
-            <div class="mb-3 form-floating">
-                <input class="form-control form-control-lg" type="email" name="login" id="login" placeholder="name@example.com" aria-describedby="loginHelpBlock" required/>
-                <label for="login" class="form-label">Login</label>
-                <div id="loginHelpBlock" class="form-text">
-                    Write the login, please.
+        <div class="d-flex justify-content-center">
+            <form class="form" action="#" th:action="@{/register}" th:method="post">
+                <div class="mb-3 form-floating">
+                    <input class="form-control" th:classappend="${loginAlreadyExist} ? 'is-invalid' : ''" type="email" name="login" id="login" placeholder="name@example.com" aria-describedby="loginHelpBlock" required/>
+                    <label for="login" class="form-label">Login</label>
+                    <div th:if="${loginAlreadyExist}" id="loginHelpBlock" class="invalid-feedback">
+                        Login already exist.
+                    </div>
                 </div>
-                <p th:if="${loginAlreadyExist}" class="invalid-feedback">Login already exist.</p>
-            </div>
-            <div class="mb-3 form-floating">
-                <input type="password" name="password" id="password" class="form-control form-control-lg" aria-describedby="passwordHelpBlock" required/>
-                <label for="password" class="form-label">Password</label>
-
-                <div id="passwordHelpBlock" class="form-text">
-                    Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
+                <div class="mb-3 form-floating">
+                    <input class="form-control" th:classappend="${passwordsTooShortError} ? 'is-invalid' : ''" type="password" name="password" id="password"  aria-describedby="passwordHelpBlock" required/>
+                    <label for="password" class="form-label">Password</label>
+                    <div th:if="${passwordsTooShortError}" class="invalid-feedback" id="passwordHelpBlock">
+                        Password is too short.
+                    </div>
                 </div>
-                <p th:if="${passwordsTooShortError}" class="invalid-feedback">Password is too short.</p>
-            </div>
-            <div class="mb-3 form-floating">
-                <input type="password" name="password_again" id="password_again" class="form-control form-control-lg" aria-describedby="passwordAgainHelpBlock" required/>
-                <label for="password_again" class="form-label">Password again</label>
-
-                <div id="passwordAgainHelpBlock" class="form-text">
-                    Write the password again, please.
+                <div class="mb-3 form-floating">
+                    <input class="form-control" th:classappend="${passwordsMatchError} ? 'is-invalid' : ''" type="password" name="password_again" id="password_again" aria-describedby="passwordAgainHelpBlock" required/>
+                    <label for="password_again" class="form-label">Password again</label>
+                    <div th:if="${passwordsMatchError}" class="invalid-feedback">
+                        Passwords not match.
+                    </div>
                 </div>
-                <p th:if="${passwordsMatchError}" class="invalid-feedback">Passwords not match.</p>
-            </div>
-            <button type="submit" class="btn btn-primary btn-lg">Sign up</button>
-        </form>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-md">Sign up</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 </html>
