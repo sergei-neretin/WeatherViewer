@@ -2,7 +2,6 @@ package com.sergeineretin.weatherviewer.controllers;
 
 import com.sergeineretin.weatherviewer.Utils;
 import com.sergeineretin.weatherviewer.dto.SessionDto;
-import com.sergeineretin.weatherviewer.dto.UserRegistrationDto;
 import com.sergeineretin.weatherviewer.service.LoginService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,7 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.time.ZonedDateTime;
 
 @WebServlet("/login")
 public class LoginController extends BaseController {
@@ -26,24 +24,11 @@ public class LoginController extends BaseController {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
-        SessionDto sessionDto = buildSessionDto(login, password);
+        SessionDto sessionDto = loginService.buildSessionDto(login, password);
         SessionDto session = loginService.login(sessionDto);
         Cookie cookie = new Cookie("sessionId", session.getId());
         cookie.setMaxAge(Integer.MAX_VALUE);
         resp.addCookie(cookie);
         resp.sendRedirect(getServletContext().getContextPath());
-    }
-
-    private SessionDto buildSessionDto(String login, String password) {
-        UserRegistrationDto userDto = UserRegistrationDto.builder()
-                .login(login)
-                .password(password)
-                .build();
-        ZonedDateTime expiredTime = ZonedDateTime.now();
-        expiredTime = expiredTime.plusHours(Utils.SESSION_TIME_IN_HOURS);
-        return SessionDto.builder()
-                .user(userDto)
-                .expiresAt(expiredTime)
-                .build();
     }
 }

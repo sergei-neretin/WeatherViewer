@@ -6,7 +6,6 @@ import com.sergeineretin.weatherviewer.model.LocationApiResponse;
 import com.sergeineretin.weatherviewer.service.OpenWeatherAPIService;
 import com.sergeineretin.weatherviewer.service.SessionService;
 import com.sergeineretin.weatherviewer.service.WeatherService;
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,8 +23,6 @@ public class SearchController extends BaseController {
 
     @Override
     public void init() throws ServletException {
-        ServletContext servletContext = getServletContext();
-        this.templateEngine = buildTemplateEngine(servletContext);
         HttpClient client = HttpClient.newHttpClient();
         weatherService = new OpenWeatherAPIService(client);
     }
