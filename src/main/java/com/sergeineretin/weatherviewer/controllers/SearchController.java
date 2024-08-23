@@ -1,6 +1,5 @@
 package com.sergeineretin.weatherviewer.controllers;
 
-import com.sergeineretin.weatherviewer.Utils;
 import com.sergeineretin.weatherviewer.model.LocationWithTemperature;
 import com.sergeineretin.weatherviewer.dto.UserDto;
 import com.sergeineretin.weatherviewer.model.LocationApiResponse;
@@ -26,14 +25,14 @@ public class SearchController extends BaseController {
     @Override
     public void init() throws ServletException {
         ServletContext servletContext = getServletContext();
-        this.templateEngine = Utils.buildTemplateEngine(servletContext);
+        this.templateEngine = buildTemplateEngine(servletContext);
         HttpClient client = HttpClient.newHttpClient();
         weatherService = new OpenWeatherAPIService(client);
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String sessionId = Utils.getSessionId(req);
+        String sessionId = getSessionId(req);
         UserDto userDto = service.getUserOrDeleteSession(sessionId);
         String name = req.getParameter("name");
         List<LocationApiResponse> locations = weatherService.findByName(name);
@@ -45,7 +44,7 @@ public class SearchController extends BaseController {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String sessionId = Utils.getSessionId(req);
+        String sessionId = getSessionId(req);
         UserDto userDto = service.getUserOrDeleteSession(sessionId);
         LocationWithTemperature location = getLocation(req);
         location.setUser(userDto);

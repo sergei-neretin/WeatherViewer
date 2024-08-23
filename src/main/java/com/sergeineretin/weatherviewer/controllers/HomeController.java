@@ -31,7 +31,7 @@ public class HomeController extends BaseController {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         WebContext webContext = Utils.buildWebContext(req, resp, getServletContext());
-        String sessionId = Utils.getSessionId(req);
+        String sessionId = getSessionId(req);
         UserDto user = sessionService.getUserOrDeleteSession(sessionId);
         List<LocationWithTemperature> locationsWithTemperatures = locationService.findLocationsByUserId(user.getId());
         weatherService.updateTemperatures(locationsWithTemperatures);
@@ -43,7 +43,7 @@ public class HomeController extends BaseController {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String sessionId = Utils.getSessionId(req);
+        String sessionId = getSessionId(req);
         UserDto user = sessionService.getUserOrDeleteSession(sessionId);
         Long id = Long.parseLong(req.getParameter("id"));
         List<LocationWithTemperature> locationsByUserId = locationService.findLocationsByUserId(user.getId());
