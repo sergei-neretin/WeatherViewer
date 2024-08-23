@@ -23,6 +23,7 @@ public class SearchController extends BaseController {
 
     @Override
     public void init() throws ServletException {
+        super.init();
         HttpClient client = HttpClient.newHttpClient();
         weatherService = new OpenWeatherAPIService(client);
     }
@@ -33,6 +34,7 @@ public class SearchController extends BaseController {
         UserDto userDto = service.getUserOrDeleteSession(sessionId);
         String name = req.getParameter("name");
         List<LocationApiResponse> locations = weatherService.findByName(name);
+        webContext.setVariable("name", name);
         webContext.setVariable("locations", locations);
         webContext.setVariable("user", userDto);
         webContext.setVariable("authorized", true);

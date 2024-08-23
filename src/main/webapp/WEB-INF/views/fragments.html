@@ -21,7 +21,7 @@
             <nav th:if="${authorized}" class="navbar bg-body-tertiary" >
                 <div class="container-fluid justify-content-center">
                     <form action="#" th:action="@{/search}" th:method="get" class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Novosibirsk" aria-label="Search" name="name" id="name" required>
+                        <input class="form-control me-2" type="search" placeholder="Novosibirsk" aria-label="Search" name="name" id="name" th:value="${name}" required>
                         <button class="btn btn-outline-success" type="submit">Search</button>
                     </form>
                 </div>
