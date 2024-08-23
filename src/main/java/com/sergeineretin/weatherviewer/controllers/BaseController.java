@@ -40,6 +40,8 @@ public class BaseController extends HttpServlet {
             webContext.setVariable("authorized", false);
             templateEngine.process("homeNotSignedIn", webContext, resp.getWriter());
         } catch (UserNotFoundException e) {
+            String login = req.getParameter("login");
+            webContext.setVariable("login", login);
             webContext.setVariable("userError", true);
             templateEngine.process("login", webContext, resp.getWriter());
         } catch (DatabaseException e) {
