@@ -13,6 +13,7 @@ import java.time.ZonedDateTime;
 @Data
 @Builder
 @Entity(name = "sessions")
+@Table(indexes = @Index(name = "ea_index", columnList = "expires_at"))
 public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
