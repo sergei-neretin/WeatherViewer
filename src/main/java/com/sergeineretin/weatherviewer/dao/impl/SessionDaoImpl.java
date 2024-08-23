@@ -13,6 +13,7 @@ import org.hibernate.query.Query;
 import org.hibernate.query.criteria.*;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -77,6 +78,24 @@ public class SessionDaoImpl implements SessionDao {
                 session.getTransaction().commit();
                 return Optional.empty();
             }
+        } catch (Exception e) {
+            if (session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+            throw new DatabaseException("Database error");
+        } finally {
+            session.close();
+        }
+    }
+
+    @Override
+    public List<Session> findAllSessions() {
+        org.hibernate.Session session = Utils.getSessionFactory().openSession();
+        try {
+             session.beginTransaction();
+            List<Session> fromSession = session.createQuery("from Session", Session.class).list();
+            session.getTransaction().commit();
+            return fromSession;
         } catch (Exception e) {
             if (session.getTransaction().isActive()) {
                 session.getTransaction().rollback();
