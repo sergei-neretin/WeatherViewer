@@ -17,6 +17,7 @@ import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 public class Utils {
     private Utils() {}
+    public static final Long SESSION_TIME_IN_HOURS = 6L;
     public static final int ZERO_CELSIUS_IN_KELVINS = 273;
     @Getter
     private static final SessionFactory sessionFactory;
