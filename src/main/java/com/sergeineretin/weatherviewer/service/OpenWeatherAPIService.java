@@ -56,9 +56,9 @@ public class OpenWeatherAPIService implements WeatherService {
     public List<LocationApiResponse> findByName(String name) throws LocationException {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI("https://api.openweathermap.org/geo/1.0/direct?"
+                    .uri(new URI( "https://api.openweathermap.org/geo/1.0/direct?"
                             + "q=" + URLEncoder.encode(name, StandardCharsets.UTF_8)
-                            + "&appid=" + Utils.API_KEY
+                            + "&appid=" + System.getenv("OPEN_WEATHER_MAP_API_KEY")
                             + "&units=" + "metric"
                             + "&limit=6"))
                     .header("Accept", "application/json")
@@ -98,7 +98,9 @@ public class OpenWeatherAPIService implements WeatherService {
     public LocationWithTemperature findByCoordinates(BigDecimal latitude, BigDecimal longitude) throws LocationException {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI("https://api.openweathermap.org/data/2.5/weather?lon=" + longitude.toString() + "&lat=" + latitude.toString() + "&appid=" + Utils.API_KEY))
+                    .uri(new URI("https://api.openweathermap.org/data/2.5/weather?lon=" + longitude.toString()
+                            + "&lat=" + latitude.toString()
+                            + "&appid=" + System.getenv("OPEN_WEATHER_MAP_API_KEY")))
                     .header("Accept", "application/json")
                     .GET()
                     .build();

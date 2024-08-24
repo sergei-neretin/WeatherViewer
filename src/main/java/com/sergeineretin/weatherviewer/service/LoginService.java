@@ -1,6 +1,7 @@
 package com.sergeineretin.weatherviewer.service;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import com.sergeineretin.weatherviewer.Utils;
 import com.sergeineretin.weatherviewer.dao.SessionDao;
 import com.sergeineretin.weatherviewer.dao.UserDao;
 import com.sergeineretin.weatherviewer.dao.impl.SessionDaoImpl;
@@ -23,7 +24,7 @@ public class LoginService {
         String encryptedPassword = user.getPassword();
         if (BCrypt.verifyer().verify(password.toCharArray(),  encryptedPassword).verified) {
             Session session = Session.builder()
-                    .expiresAt(ZonedDateTime.now().plusHours(6))
+                    .expiresAt(ZonedDateTime.now().plusHours(Utils.SESSION_TIME_IN_HOURS))
                     .user(user)
                     .build();
             sessionDao.saveSession(session);
