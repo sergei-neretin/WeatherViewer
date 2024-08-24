@@ -61,4 +61,18 @@ public class UserDaoImpl implements UserDao {
             throw new DatabaseException("Database unavailable");
         }
     }
+
+    @Override
+    public User getUserByLogin(String login) {
+        try (Session session = Utils.getSessionFactory().openSession()) {
+            session.beginTransaction();
+            User user = session.createQuery("from User where login = :login", User.class)
+                    .setParameter("login", login)
+                    .uniqueResult();
+            session.getTransaction().commit();
+            return user;
+        } catch (Exception e) {
+            throw new DatabaseException("Database unavailable");
+        }
+    }
 }

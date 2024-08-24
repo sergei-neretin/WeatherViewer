@@ -1,16 +1,14 @@
 package com.sergeineretin.weatherviewer.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.ZonedDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
 @Entity
 @Table(name = "sessions", indexes = @Index(name = "ea_index", columnList = "expires_at"))
@@ -20,7 +18,7 @@ public class Session {
     @Column(name = "id")
     private String id;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id")
     private User user;
     @Column(name = "expires_at")
     private ZonedDateTime expiresAt;

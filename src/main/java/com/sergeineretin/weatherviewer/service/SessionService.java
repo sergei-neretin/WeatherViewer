@@ -4,7 +4,6 @@ import com.sergeineretin.weatherviewer.dao.SessionDao;
 import com.sergeineretin.weatherviewer.dao.UserDao;
 import com.sergeineretin.weatherviewer.dao.impl.SessionDaoImpl;
 import com.sergeineretin.weatherviewer.dao.impl.UserDaoImpl;
-import com.sergeineretin.weatherviewer.dto.SessionDto;
 import com.sergeineretin.weatherviewer.dto.UserDto;
 import com.sergeineretin.weatherviewer.exceptions.SessionExpiredException;
 import com.sergeineretin.weatherviewer.model.Session;
@@ -26,15 +25,6 @@ public class SessionService {
             instance = new SessionService();
         }
         return instance;
-    }
-
-    public SessionDto getSessionOrDelete(String sessionId) {
-        Optional<Session> session = sessionDao.findById(sessionId);
-        if(session.isPresent()) {
-            return modelMapper.map(session.get(), SessionDto.class);
-        } else {
-            throw new SessionExpiredException("Session expired");
-        }
     }
 
     public UserDto getUserOrDeleteSession(String sessionId) {

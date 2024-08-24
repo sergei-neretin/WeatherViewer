@@ -24,8 +24,7 @@ public class LoginController extends BaseController {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
-        SessionDto sessionDto = loginService.buildSessionDto(login, password);
-        SessionDto session = loginService.login(sessionDto);
+        SessionDto session = loginService.login(login, password);
         Cookie cookie = new Cookie("sessionId", session.getId());
         cookie.setMaxAge(Integer.MAX_VALUE);
         resp.addCookie(cookie);
