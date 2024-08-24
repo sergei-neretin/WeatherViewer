@@ -17,7 +17,7 @@ public class LoginServiceIntegrationTests {
         registrationService.register(userRegistrationDto);
         SessionDto sessionDto = TestUtils.getSessionDto();
         sessionDto.setUser(userRegistrationDto);
-        SessionDto result = underTest.login(sessionDto);
+        SessionDto result = underTest.login("John Doe", "password1");
 
         assertEquals(userRegistrationDto.getLogin(), result.getUser().getLogin());
     }
